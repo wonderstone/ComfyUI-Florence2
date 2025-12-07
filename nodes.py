@@ -18,14 +18,13 @@ from unittest.mock import patch
 from transformers.dynamic_module_utils import get_imports
 
 def fixed_get_imports(filename: str | os.PathLike) -> list[str]:
+    if not str(filename).endswith("modeling_florence2.py"):
+        return get_imports(filename)
+    imports = get_imports(filename)
     try:
-        if not str(filename).endswith("modeling_florence2.py"):
-            return get_imports(filename)
-        imports = get_imports(filename)
         imports.remove("flash_attn")
-    except:
-        print(f"No flash_attn import to remove")
-        pass
+    except ValueError:
+        pass  # flash_attn not in imports, ignore
     return imports
 
 
